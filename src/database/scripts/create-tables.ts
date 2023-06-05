@@ -21,6 +21,7 @@ export const createTables = async () => {
 	        phone TEXT UNIQUE NOT NULL,
             device_id TEXT UNIQUE NOT NULL,
             birth_date DATE NOT NULL,
+            role TEXT NOT NULL,
             status TEXT NOT NULL,
 	        created_on TIMESTAMP NOT NULL
         )

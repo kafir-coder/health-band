@@ -12,3 +12,13 @@ export const notFound = () => ({
     status: 404,
     message: 'resource not found'
 })
+
+export const unauthorized = (data: any) => ({
+    status: 401,
+    message: data
+})
+
+export const forbiden = (data: any) => ({
+    status: 403,
+    message: data
+})

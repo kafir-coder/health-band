@@ -1,9 +1,8 @@
 import express from 'express'
 import { appConfig } from './config/app'
 import { mountRoutes } from './routes'
-import { ok } from 'assert'
 import { worker } from './mq/workers'
-
+import cors from 'cors'
 
 const app = express()
 
@@ -11,6 +10,7 @@ const app = express()
 
 
 app.use(express.json())
+app.use(cors())
 
 mountRoutes(app)
 

@@ -3,10 +3,12 @@ import { query } from "../database"
 import * as crypto from 'crypto'
 import * as bcrypt from 'bcryptjs'
 import { Router, Request, Response } from 'express'
+import { hasToken } from "../middlewares"
 
 const router = Router()
 export interface UserParams {
     name: string
+    role: string
     birth_date: Date
     device_id: string
     phone: string
@@ -15,14 +17,14 @@ export interface UserParams {
 }
 export const createUsers = async (payload: UserParams) => {
 
-    const { birth_date, device_id, name, phone, status, password } = payload
+    const { birth_date, device_id, name, phone, status, password, role } = payload
     const id = crypto.randomUUID()
-    const pwd = bcrypt.hash(password, 20)
+    const pwd = await bcrypt.hash(password, 10)
 
     // try-catch errors
     await query(`
-        INSERT INTO users(id, name, password, phone, device_id, birth_date, status, created_on) values($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [id, name, pwd, phone, device_id, birth_date, status, new Date()]
+        INSERT INTO users(id, name, password, phone, device_id, birth_date, status, role, created_on) values($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [id, name, pwd, phone, device_id, birth_date, status, role, new Date()]
     )
 
 }
@@ -39,17 +41,18 @@ export const getUser = async (id: string): Promise<UserParams> => {
 export const listUsers = async (limit: number, page: number) => {
 
     const result = await query(
-        "SELECT count(*) FROM users"
+        "SELECT count(*) FROM users WHERE role=$1 ",
+        ["normal"]
     )
 
     const { rows, rowCount} = await query(
-        "SELECT * FROM users ORDER BY id DESC LIMIT $1 OFFSET $2",
-        [limit, (page-1)*limit]
+        "SELECT * FROM users WHERE role=$1 ORDER BY id DESC LIMIT $2 OFFSET $3",
+        ["normal", limit, (page-1)*limit]
     )
 
     return {
         data: rows,
-        count: result.rows
+        count: Number(result.rows[0].count)
     }
 }
 
