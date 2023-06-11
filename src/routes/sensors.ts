@@ -19,7 +19,8 @@ export const writeSPO2 = async (payload: SensorParams) => myQueue.add('spo2', pa
 export const getTemperature = async (userId: string) => {
     const {rows} = await query(`
         SELECT
-            value
+            value,
+            status
         FROM temperature_entry where
             user_id=$1
         ORDER BY timestamp DESC LIMIT 1`,
@@ -30,24 +31,30 @@ export const getTemperature = async (userId: string) => {
         return "NO_DATA"
     }
 
-    return rows[0].value
+    return {
+        value: rows[0].value,
+        status: rows[0].status
+    }
 }
 
 export const getHeartBpm = async (userId: string) => {
     const {rows} = await query(`
-        SELECT value FROM heart_beaps_entry where user_id=$1 ORDER BY timestamp DESC LIMIT 1`,
+        SELECT value, status FROM heart_beaps_entry where user_id=$1 ORDER BY timestamp DESC LIMIT 1`,
         [userId]
     )
 
     if (rows.length === 0) {
         return "NO_DATA"
     }
-    return rows[0].value
+    return {
+        value: rows[0].value,
+        status: rows[0].status
+    }
 }
 
 export const getSP02 = async (userId: string) => {
     const {rows} = await query(`
-        SELECT value FROM sp02_entry where user_id=$1 ORDER BY timestamp DESC LIMIT 1`,
+        SELECT value, status FROM sp02_entry where user_id=$1 ORDER BY timestamp DESC LIMIT 1`,
         [userId]
     )
 
@@ -55,7 +62,10 @@ export const getSP02 = async (userId: string) => {
         return "NO_DATA"
     }
 
-    return rows[0].value
+    return {
+        value: rows[0].value,
+        status: rows[0].status
+    }
 }
 
 
@@ -92,7 +102,7 @@ router.get('/sensors/get-all-sensors-data', hasToken, async (req: Request, res: 
     })
 })
 
-router.get('/sensors/get-all-sensors-data', hasToken, async (req: Request, res: Response) => {
+router.get('/sensors/get-all-temperature', hasToken, async (req: Request, res: Response) => {
 
     //@ts-ignore
     const {userId} = req.user

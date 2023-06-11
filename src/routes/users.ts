@@ -24,7 +24,7 @@ export const createUsers = async (payload: UserParams) => {
     // try-catch errors
     await query(`
         INSERT INTO users(id, name, password, phone, device_id, birth_date, status, role, created_on) values($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [id, name, pwd, phone, device_id, birth_date, status, role, new Date()]
+        [id, name, pwd, phone, device_id, birth_date, "ACORDADO", role, new Date()]
     )
 
 }

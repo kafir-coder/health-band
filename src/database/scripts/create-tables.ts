@@ -39,6 +39,7 @@ export const createTables = async () => {
             id TEXT PRIMARY KEY,
 	        value real NOT NULL,
             user_id TEXT NOT NULL,
+            status TEXT NOT NULL,
             timestamp TIMESTAMP NOT NULL
         )
     `)
@@ -49,6 +50,7 @@ export const createTables = async () => {
             id TEXT PRIMARY KEY,
 	        value real NOT NULL,
             user_id TEXT NOT NULL,
+            status TEXT NOT NULL,
             timestamp TIMESTAMP NOT NULL
         )
     `)
@@ -59,6 +61,7 @@ export const createTables = async () => {
             id TEXT PRIMARY KEY,
 	        value real NOT NULL,
             user_id TEXT NOT NULL,
+            status TEXT NOT NULL,
             timestamp TIMESTAMP NOT NULL
         )
     `)
