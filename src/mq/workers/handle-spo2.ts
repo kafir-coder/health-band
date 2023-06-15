@@ -7,7 +7,7 @@ import * as crypto from 'crypto'
 export const ANOMALIA_MESSAGE = "O SP02 esta fora do normal, convem consultar um posto de saúde"
 export const handleSPO2 = async (data: SensorParams) => {
 
-    const sensorValue = parseInt(getRandomSPO(60, 100).toFixed(2))
+    const sensorValue = parseInt(getRandomSPO(90, 100).toFixed(2))
     const { device_id, timestamp, value } = data
     const isNormal = isSPO2Normal(sensorValue)
 
