@@ -7,8 +7,9 @@ import * as crypto from 'crypto'
 export const ANOMALIA_MESSAGE = "O SP02 esta fora do normal, convem consultar um posto de saúde"
 export const handleSPO2 = async (data: SensorParams) => {
 
+    const sensorValue = parseInt(getRandomSPO(60, 100).toFixed(2))
     const { device_id, timestamp, value } = data
-    const isNormal = isSPO2Normal(data.value)
+    const isNormal = isSPO2Normal(sensorValue)
 
     if (!isNormal) {
         // DO SOMETHING WITH THIS INFORMATION
@@ -22,7 +23,7 @@ export const handleSPO2 = async (data: SensorParams) => {
 
     await query(`
         INSERT INTO sp02_entry(id, value, user_id, status, timestamp) values($1, $2, $3, $4, $5)`,
-        [id, getRandomSPO(95, 100).toFixed(2), rows[0].id, status, new Date()]
+        [id, sensorValue, rows[0].id, status, new Date()]
     )
 }
 

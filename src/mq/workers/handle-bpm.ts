@@ -7,8 +7,10 @@ import * as crypto from 'crypto'
 export const ANOMALIA_MESSAGE = "Os batimentos cardiaco estão fora do normal, convem consultar um posto de saúde"
 export const handlebpm = async (data: SensorParams) => {
 
+
+    const sensorValue = parseInt(getRandomBPM(60, 100).toFixed(2))
     const { device_id, timestamp, value } = data
-    const isNormal = isBpmNormal(data.value)
+    const isNormal = isBpmNormal(sensorValue)
 
     if (!isNormal) {
         // DO SOMETHING WITH THIS INFORMATION
@@ -21,7 +23,7 @@ export const handlebpm = async (data: SensorParams) => {
 
     await query(`
         INSERT INTO heart_beaps_entry(id, value, user_id, status, timestamp) values($1, $2, $3, $4, $5)`,
-        [id, getRandomBPM(60, 100).toFixed(2), rows[0].id, status, new Date()]
+        [id, sensorValue, rows[0].id, status, new Date()]
     )
 }
 
