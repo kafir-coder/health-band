@@ -1,4 +1,4 @@
-import { created } from "../helpers/http-helpers"
+import { created, ok } from "../helpers/http-helpers"
 import { Router, Request, Response } from 'express'
 import { myQueue } from "../mq"
 import {query} from '../database'
@@ -68,6 +68,30 @@ export const getSP02 = async (userId: string) => {
     }
 }
 
+export const getHistoryTemperature = async (user_id: string, limit: number, page: number) => {
+    await query(
+        "SELECT * FROM temperature_entry WHERE user_id=$1 ORDER BY id DESC LIMIT $2 OFFSET $3",
+        [user_id, limit, (page-1)*limit]
+    )
+}
+
+export const getHistorySP02 = async (user_id: string, limit: number, page: number) => {
+    await query(
+        "SELECT * FROM sp02_entry WHERE user_id=$1 ORDER BY id DESC LIMIT $2 OFFSET $3",
+        [user_id, limit, (page-1)*limit]
+    )
+}
+
+export const getHistoryBPM = async (user_id: string, limit: number, page: number) => {
+
+    const {rows} = await query(
+        "SELECT * FROM heart_beaps_entry WHERE user_id=$1 ORDER BY id DESC LIMIT $2 OFFSET $3",
+        [user_id, limit, (page-1)*limit]
+    )
+
+    return rows
+
+}
 
 
 router.post('/sensors/write-temperature', async (req: Request, res: Response) => {
@@ -137,5 +161,41 @@ router.get('/sensors/get-sp02', hasToken, async (req: Request, res: Response) =>
     })
 })
 
+router.get('/sensors/get-spo2-history', hasToken, async (req: Request, res: Response) => {
+
+    let { limit, page } = req.query as unknown as {limit: number, page: number}
+    limit |= 20;
+    page |= 1
+
+    //@ts-ignore
+    const result = await getHistorySP02(req.user.userId, limit, page)
+
+    res.status(200).json(ok(result))
+
+})
+
+router.get('/sensors/get-temperature-history', hasToken, async (req: Request, res: Response) => {
+
+    let { limit, page } = req.query as unknown as {limit: number, page: number}
+    limit |= 20;
+    page |= 1
+
+    //@ts-ignore
+    const result = await getHistoryTemperature(req.user.userId, limit, page)
+
+    res.status(200).json(ok(result))
+})
+
+router.get('/sensors/get-bpm-history', hasToken, async (req: Request, res: Response) => {
+
+    let { limit, page } = req.query as unknown as {limit: number, page: number}
+    limit |= 20;
+    page |= 1
+
+    //@ts-ignore
+    const result = await getHistoryBPM(req.user.userId, limit, page)
+
+    res.status(200).json(ok(result))
+})
 
 export const sensorsRouter = router
