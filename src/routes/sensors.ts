@@ -69,17 +69,21 @@ export const getSP02 = async (userId: string) => {
 }
 
 export const getHistoryTemperature = async (user_id: string, limit: number, page: number) => {
-    await query(
+    const {rows} = await query(
         "SELECT * FROM temperature_entry WHERE user_id=$1 ORDER BY id DESC LIMIT $2 OFFSET $3",
         [user_id, limit, (page-1)*limit]
     )
+
+    return rows
 }
 
 export const getHistorySP02 = async (user_id: string, limit: number, page: number) => {
-    await query(
+    const {rows} = await query(
         "SELECT * FROM sp02_entry WHERE user_id=$1 ORDER BY id DESC LIMIT $2 OFFSET $3",
         [user_id, limit, (page-1)*limit]
     )
+
+    return rows
 }
 
 export const getHistoryBPM = async (user_id: string, limit: number, page: number) => {
